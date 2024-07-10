@@ -1,10 +1,11 @@
 package jet
 
 import (
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/require"
 )
 
 func TestArgToString(t *testing.T) {
@@ -56,4 +57,49 @@ func TestShouldQuote(t *testing.T) {
 	require.Equal(t, shouldQuoteIdentifier("abc_123"), false)
 	require.Equal(t, shouldQuoteIdentifier("Abc_123"), true)
 	require.Equal(t, shouldQuoteIdentifier("ǄƜĐǶ"), true)
+}
+
+func TestStringQuote(t *testing.T) {
+	scenarios := []struct {
+		name   string
+		input  string
+		output string
+	}{
+		{
+			name:   "simple string",
+			input:  "hello world",
+			output: `"hello world"`,
+		},
+		{
+			name:   "single quotes",
+			input:  "hello 'world'",
+			output: `"hello 'world'"`,
+		},
+		{
+			name:   "double quotes",
+			input:  `hello "world"`,
+			output: `"hello \"world\""`,
+		},
+		{
+			name:   "new lines",
+			input:  "hello\nworld",
+			output: `"hello\nworld"`,
+		},
+		{
+			name:   "unicode",
+			input:  "hello \\😂",
+			output: `"hello \\😂"`,
+		},
+		{
+			name:   "trailing backslash",
+			input:  "hello\\",
+			output: `"hello\\"`,
+		},
+	}
+
+	for _, tt := range scenarios {
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.output, stringQuote(tt.input))
+		})
+	}
 }

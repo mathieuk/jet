@@ -4,15 +4,16 @@ import (
 	"bytes"
 	"database/sql/driver"
 	"fmt"
-	"github.com/go-jet/jet/v2/internal/3rdparty/pq"
-	"github.com/go-jet/jet/v2/internal/utils/is"
-	"github.com/google/uuid"
 	"reflect"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/go-jet/jet/v2/internal/3rdparty/pq"
+	"github.com/go-jet/jet/v2/internal/utils/is"
+	"github.com/google/uuid"
 )
 
 // SQLBuilder generates output SQL
@@ -299,5 +300,5 @@ func shouldQuoteIdentifier(identifier string) bool {
 }
 
 func stringQuote(value string) string {
-	return `'` + strings.Replace(value, "'", "''", -1) + `'`
+	return fmt.Sprintf("%q", value)
 }
